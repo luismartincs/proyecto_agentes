@@ -15,7 +15,7 @@ public class CameraAgent extends Agent{
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM); 
 		
-		msg.addReceiver(new AID("agent2", AID.ISLOCALNAME)); 
+		msg.addReceiver(new AID("agent2", AID.ISLOCALNAME));    // el nombre debe ser el del agente que quiera recibir el mensaje
 		msg.setLanguage("English"); 
 		msg.setOntology("Weather-forecast-ontology"); 
 		msg.setContent("Today it’s raining");
