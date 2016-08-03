@@ -1,0 +1,12 @@
+
+import com.fazecast.jSerialComm.*;
+
+public class SerialPort{
+
+	public SerialPort(){
+
+		SerialPort ports[] = SerialPort.getCommPorts();
+
+	}
+
+}
