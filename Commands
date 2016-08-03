@@ -1,0 +1,4 @@
+java -cp jade.jar:jSerialComm.jar:. jade.Boot -container -host 192.168.15.190 -port 1099 -agents agent2:RobotAgent
+java -cp jade.jar:jSerialComm.jar:. jade.Boot -container -host 192.168.15.190 -port 1099 -agents cam1:CameraAgent
+
+javac -cp jade.jar:jSerialComm.jar:. behaviours/CallForPosition.java serial/RobotInterface.java RobotAgent.java CameraAgent.java
