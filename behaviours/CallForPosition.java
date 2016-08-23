@@ -22,7 +22,7 @@ public class CallForPosition extends CyclicBehaviour{
 	  	if (msg != null) {
 	  		System.out.println("Message received!");
 			System.out.println(msg.getContent());
-			serialComm.write('F');
+			serialComm.write(msg.getContent().charAt(0));
 		}else {
 		    block();
 		} 

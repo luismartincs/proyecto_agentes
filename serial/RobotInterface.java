@@ -22,7 +22,7 @@ public class RobotInterface{
 			os.write((int)data);
 			os.close();
 		}catch(Exception ex){
-
+			System.out.println(ex);
 		}
 	}
 
@@ -30,7 +30,7 @@ public class RobotInterface{
 		try{
 			comPort.closePort();
 		}catch(Exception ex){
-
+			System.out.println(ex);
 		}
 	}
 
