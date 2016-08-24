@@ -3,29 +3,101 @@ package behaviours;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import serial.RobotInterface;
-
+import jade.core.AID;
 
 public class CallForPosition extends CyclicBehaviour{
 
+	private int repliesCnt=0;
+	private int besttimeplan=10000;
+	private AID bestCamera;
+	private String name;
+	private String nameTag;
 	private RobotInterface serialComm;
+	private static boolean DEBUG = true;
 
 
 	public void onStart(){
-		System.out.println("Opening the port");
-		serialComm = new RobotInterface();
+		
+		name = myAgent.getLocalName();
+		nameTag = "("+name+")";
+
+		if(!DEBUG){
+			System.out.println("Opening the port");
+			serialComm = new RobotInterface();
+		}
 	}
 
 	public void action() {
 	  	
-	  	ACLMessage msg = myAgent.receive();
+	  	ACLMessage msg=myAgent.receive();
 
-	  	if (msg != null) {
-	  		System.out.println("Message received!");
-			System.out.println(msg.getContent());
-			serialComm.write(msg.getContent().charAt(0));
+	  	if(msg !=null){
+			
+			
+			// Si solicitan la posicion inicial
+			if (msg.getPerformative() == ACLMessage.REQUEST){
+
+				if(msg.getContent().equals("start")){
+					start();
+				}
+
+			}else if(msg.getPerformative() == ACLMessage.PROPOSE){
+
+				receiveProposal(msg);
+				
+			}
+
 		}else {
-		    block();
-		} 
+			block();
+		}
+
+	}
+
+	//==================== Acciones individuales ====================
+
+	private void start(){
+		System.out.println(nameTag + " Iniciando agente");
+		
+		ACLMessage cfp=new ACLMessage(ACLMessage.CFP);
+		cfp.addReceiver(new AID("camera1",AID.ISLOCALNAME));
+		cfp.addReceiver(new AID("camera2",AID.ISLOCALNAME));
+		cfp.setContent("Give me a plan");
+		cfp.setConversationId("Plan-trade");
+		myAgent.send(cfp);
+
+	}
+
+	private void receiveProposal(ACLMessage msg){
+		
+		System.out.println(nameTag + " Reply num: "+repliesCnt);
+
+		int timeplan=Integer.parseInt(msg.getContent());
+				
+		if  (timeplan < besttimeplan){
+			besttimeplan=timeplan;
+			bestCamera=msg.getSender();
+		}
+				
+		System.out.println(nameTag + " El nuevo mejor tiempo es "+besttimeplan);
+
+		repliesCnt++;
+
+		if(repliesCnt >= 2){
+			accept(msg);
+		}
+
+	}
+
+	private void accept(ACLMessage msg){
+
+		if (bestCamera !=null){
+			ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+			order.addReceiver(bestCamera);
+			order.setContent("You won");
+			order.setConversationId("Plan-trade");
+			myAgent.send(order);
+		}	
+
 	}
 
 }
