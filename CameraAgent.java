@@ -13,18 +13,10 @@ public class CameraAgent extends Agent{
 
 	protected void setup() { 
 		
-		System.out.println("Im a camera agent!"); 
+		System.out.println("Camera Agent"); 
 
 		addBehaviour(new CameraPlanner());
 
-/*
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM); 
-		
-		msg.addReceiver(new AID("agent2", AID.ISLOCALNAME));    // el nombre debe ser el del agente que quiera recibir el mensaje
-		msg.setLanguage("English"); 
-		msg.setOntology("Weather-forecast-ontology"); 
-		msg.setContent("Today its raining");
-		send(msg);*/
     }
 
 } 

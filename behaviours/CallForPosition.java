@@ -45,6 +45,10 @@ public class CallForPosition extends CyclicBehaviour{
 
 				receiveProposal(msg);
 				
+			}else if(msg.getPerformative() == ACLMessage.INFORM){
+				
+				move(msg);
+
 			}
 
 		}else {
@@ -61,7 +65,7 @@ public class CallForPosition extends CyclicBehaviour{
 		ACLMessage cfp=new ACLMessage(ACLMessage.CFP);
 		cfp.addReceiver(new AID("camera1",AID.ISLOCALNAME));
 		cfp.addReceiver(new AID("camera2",AID.ISLOCALNAME));
-		cfp.setContent("Give me a plan");
+		cfp.setContent("get-plan");
 		cfp.setConversationId("Plan-trade");
 		myAgent.send(cfp);
 
@@ -94,6 +98,31 @@ public class CallForPosition extends CyclicBehaviour{
 			ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 			order.addReceiver(bestCamera);
 			order.setContent("You won");
+			order.setConversationId("Plan-trade");
+			myAgent.send(order);
+		}	
+
+	}
+
+	private void move(ACLMessage msg){
+
+		String data[] = msg.getContent().split(",");
+
+		System.out.println(nameTag + " Move to "+data[0]+","+data[1]);
+
+		//INTEGRAR CON ARDUINO
+		
+		next();
+
+	}
+
+
+	private void next(){
+
+		if (bestCamera !=null){
+			ACLMessage order = new ACLMessage(ACLMessage.REQUEST);
+			order.addReceiver(bestCamera);
+			order.setContent("next");
 			order.setConversationId("Plan-trade");
 			myAgent.send(order);
 		}	
