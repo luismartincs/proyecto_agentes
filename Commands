@@ -10,6 +10,10 @@ java -cp jade.jar:jSerialComm.jar:. jade.Boot -agents camera1:CameraAgent -gui
 
 javac -cp jade.jar:jSerialComm.jar:. behaviours/CallForPosition.java serial/RobotInterface.java RobotAgent.java CameraAgent.java
 
+//Run all agents for debug
+
+java -cp jade.jar:jSerialComm.jar:. jade.Boot -agents "camera1:CameraAgent;camera2:CameraAgent;robot1:RobotAgent;robot2:RobotAgent;robot3:RobotAgent" -gui
+
 //Remove all class files
 //Linux
 find -name "*.class" -exec rm -R {} \;

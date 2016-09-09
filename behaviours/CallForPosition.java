@@ -79,7 +79,7 @@ public class CallForPosition extends CyclicBehaviour{
 					RobotMap receivedMap = RobotMap.getFromString(msg.getContent(),rows,columns);
 
 					mapa.merge(receivedMap);
-					mapa.print();
+					//mapa.print();
 
 					//START MOVEMENT
 
@@ -89,7 +89,8 @@ public class CallForPosition extends CyclicBehaviour{
 
 					plan = PlanObject.getFromString(msg.getContent());
 
-					System.out.println(nameTag + " Tiempo del plan "+plan.getTime());
+					System.out.println(nameTag + " Tiempo final del plan "+plan.getTime());
+					System.out.println(nameTag + " Plan final: "+plan.toString());
 
 					cfpMap();
 				}
@@ -196,7 +197,7 @@ public class CallForPosition extends CyclicBehaviour{
 		ACLMessage data = new ACLMessage(ACLMessage.INFORM);
 
 		data.addReceiver(contract.getSender());
-		data.setContent("1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2");//mapa.toString());
+		data.setContent(mapa.toString());
 		data.setConversationId(MAP_TRADE);
 		myAgent.send(data);
 	}

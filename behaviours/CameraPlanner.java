@@ -108,7 +108,6 @@ public class CameraPlanner extends CyclicBehaviour{
 			// Si solicitan la posicion inicial
 			if (msg.getPerformative() == ACLMessage.CFP){
 
-				System.out.println(nameTag+" Haciendo propuesta");
 				System.out.println(nameTag+": Solicitud del Robot "+robotId);
 
 				Point []points = readAgentData(robotId);
@@ -119,8 +118,8 @@ public class CameraPlanner extends CyclicBehaviour{
 
 				int time = plan.getTime();
 
-				System.out.println(nameTag+": Tiempo a proponer "+plan.getTime());
-				System.out.println(nameTag+": Protocol string "+plan);
+				System.out.println(nameTag+": Tiempo a proponer al robot "+robotId+":"+plan.getTime());
+				System.out.println(nameTag+": Protocol string al robot "+robotId+":"+plan);
 
 				propose(msg,time);
 
@@ -166,7 +165,7 @@ public class CameraPlanner extends CyclicBehaviour{
 		PlanObject planToSend = allPlans.get(contract.getSender().getLocalName());
 
 		System.out.println(nameTag+" Me contrataron");
-		System.out.println(nameTag+" El plan es "+planToSend);
+		System.out.println(nameTag+" El plan para "+contract.getSender().getLocalName()+" es "+planToSend);
 
 		//CALCULAR EL SIGUIENTE PUNTO
 
