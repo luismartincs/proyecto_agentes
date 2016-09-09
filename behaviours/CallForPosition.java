@@ -47,7 +47,7 @@ public class CallForPosition extends CyclicBehaviour{
 				
 			}else if(msg.getPerformative() == ACLMessage.INFORM){
 				
-				move(msg);
+				//move(msg);
 
 			}
 
@@ -74,6 +74,7 @@ public class CallForPosition extends CyclicBehaviour{
 	private void receiveProposal(ACLMessage msg){
 		
 		System.out.println(nameTag + " Reply num: "+repliesCnt);
+		System.out.println(nameTag + " Proposal: "+msg.getContent());
 
 		int timeplan=Integer.parseInt(msg.getContent());
 				

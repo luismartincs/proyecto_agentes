@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import jaya.Jaya;
+import jaya.PlanObject;
 
 
 class Point{
@@ -109,9 +110,10 @@ public class CameraPlanner extends CyclicBehaviour{
 
 				Point []points = readAgentData(robotId);
 
-				time = algoritmo.optimizar(new int[]{5,1000}, new int[]{3,1000});
+				PlanObject plan = algoritmo.optimizar(new int[]{5,20}, new int[]{3,20});
 
-				System.out.println(nameTag+": Tiempo a proponer "+time);
+				System.out.println(nameTag+": Tiempo a proponer "+plan.getTime());
+				System.out.println(nameTag+": Protocol string "+plan);
 
 				propose(msg);
 
