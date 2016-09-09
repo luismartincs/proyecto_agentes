@@ -1,5 +1,6 @@
 package behaviours;
 
+import java.util.HashMap;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import java.io.BufferedReader;
@@ -36,15 +37,17 @@ public class CameraPlanner extends CyclicBehaviour{
 	private String filePath = "/home/luismartin/Documentos/Maestria/Agentes/vision/proyectos/camera_agent/log/agents.txt";
 
 	private int step = 0;
-	private int time = 0;
 	private String name;
 	private String nameTag;
 	private Jaya algoritmo;
+	private PlanObject plan;
+	private HashMap<String, PlanObject> allPlans;
 
 	public void onStart(){
 		algoritmo = new Jaya();
 		name = myAgent.getLocalName();
 		nameTag = "("+name+")";
+		allPlans = new HashMap<String, PlanObject>();
 		System.out.println(nameTag+" Camera Planner started");
 	}
 
@@ -110,12 +113,16 @@ public class CameraPlanner extends CyclicBehaviour{
 
 				Point []points = readAgentData(robotId);
 
-				PlanObject plan = algoritmo.optimizar(new int[]{5,20}, new int[]{3,20});
+				plan = algoritmo.optimizar(new int[]{5,20}, new int[]{3,20});
+
+				allPlans.put("robot"+robotId,plan);
+
+				int time = plan.getTime();
 
 				System.out.println(nameTag+": Tiempo a proponer "+plan.getTime());
 				System.out.println(nameTag+": Protocol string "+plan);
 
-				propose(msg);
+				propose(msg,time);
 
 			}else if(msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
 
@@ -143,7 +150,7 @@ public class CameraPlanner extends CyclicBehaviour{
 	//==================== Acciones individuales ====================
 
 
-	private void propose(ACLMessage msg){
+	private void propose(ACLMessage msg,int time){
 		
 		ACLMessage proposal=msg.createReply();
 		proposal.setPerformative(ACLMessage.PROPOSE);
@@ -156,16 +163,19 @@ public class CameraPlanner extends CyclicBehaviour{
 
 	private void inform(ACLMessage contract){
 
+		PlanObject planToSend = allPlans.get(contract.getSender().getLocalName());
+
 		System.out.println(nameTag+" Me contrataron");
+		System.out.println(nameTag+" El plan es "+planToSend);
 
 		//CALCULAR EL SIGUIENTE PUNTO
 
-		ACLMessage plan = new ACLMessage(ACLMessage.INFORM);
+		ACLMessage data = new ACLMessage(ACLMessage.INFORM);
 
-		plan.addReceiver(contract.getSender());
-		plan.setContent("4,5");
-		plan.setConversationId("Plan-trade");
-		myAgent.send(plan);
+		data.addReceiver(contract.getSender());
+		data.setContent(planToSend.toString());
+		data.setConversationId("Plan-trade");
+		myAgent.send(data);
 	}
 
 

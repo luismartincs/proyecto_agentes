@@ -4,6 +4,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import serial.RobotInterface;
 import jade.core.AID;
+import jaya.PlanObject;
 
 public class CallForPosition extends CyclicBehaviour{
 
@@ -12,6 +13,7 @@ public class CallForPosition extends CyclicBehaviour{
 	private AID bestCamera;
 	private String name;
 	private String nameTag;
+	private PlanObject plan;
 	private RobotInterface serialComm;
 	private static boolean DEBUG = true;
 
@@ -47,7 +49,9 @@ public class CallForPosition extends CyclicBehaviour{
 				
 			}else if(msg.getPerformative() == ACLMessage.INFORM){
 				
-				//move(msg);
+				plan = PlanObject.getFromString(msg.getContent());
+
+				System.out.println("Tiempo del plan"+plan.getTime());
 
 			}
 
@@ -76,7 +80,7 @@ public class CallForPosition extends CyclicBehaviour{
 		System.out.println(nameTag + " Reply num: "+repliesCnt);
 		System.out.println(nameTag + " Proposal: "+msg.getContent());
 
-		int timeplan=Integer.parseInt(msg.getContent());
+		int timeplan = Integer.parseInt(msg.getContent());
 				
 		if  (timeplan < besttimeplan){
 			besttimeplan=timeplan;
@@ -88,6 +92,7 @@ public class CallForPosition extends CyclicBehaviour{
 		repliesCnt++;
 
 		if(repliesCnt >= 2){
+			repliesCnt = 0;
 			accept(msg);
 		}
 
