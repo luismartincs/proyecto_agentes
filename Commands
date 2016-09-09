@@ -11,4 +11,9 @@ java -cp jade.jar:jSerialComm.jar:. jade.Boot -agents camera1:CameraAgent -gui
 javac -cp jade.jar:jSerialComm.jar:. behaviours/CallForPosition.java serial/RobotInterface.java RobotAgent.java CameraAgent.java
 
 //Remove all class files
+//Linux
 find -name "*.class" -exec rm -R {} \;
+
+//Mac
+find . -type f -regex '.*\.class' -print -exec rm rf {} \;
+
