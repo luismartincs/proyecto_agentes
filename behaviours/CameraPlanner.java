@@ -126,7 +126,7 @@ public class CameraPlanner extends CyclicBehaviour{
 
 			}else if(msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
 
-				System.out.println(nameTag+" Aceptando propuesta");
+				System.out.println(nameTag+" Aceptaron propuesta");
 				inform(msg);
 
 			}else if(msg.getPerformative() == ACLMessage.REQUEST){

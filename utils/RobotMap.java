@@ -44,6 +44,17 @@ public class RobotMap {
         return count;
     }
     
+    public void merge(RobotMap toMerge){
+        
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if(map[i][j] == 0){
+                    map[i][j] = toMerge.get(i, j);
+                }
+            }
+        }  
+    }
+    
     public void print(){
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -91,6 +102,10 @@ public class RobotMap {
         return str.toString();
     }
     
+    
+    public int get(int row,int col){
+        return map[row][col];
+    }
     
     
     public int getRows() {
