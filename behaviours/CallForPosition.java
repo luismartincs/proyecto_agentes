@@ -28,7 +28,7 @@ public class CallForPosition extends CyclicBehaviour{
 	private static final String PLAN_TRADE = "plan-trade";
 	private static final String MAP_TRADE = "map-trade";	
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 
 	public void onStart(){
@@ -60,6 +60,15 @@ public class CallForPosition extends CyclicBehaviour{
 				
 				}else if(msg.getContent().equals("map")){
 					cfpMap();
+				}else if(msg.getContent().equals("debug")){
+					serialComm.write('S');
+					
+					try{Thread.sleep(15*1000);}catch(Exception ex){}
+
+					System.out.println("read");
+					serialComm.getMap();
+					System.out.println("");
+					System.out.println("end");
 				}
 
 			}else if(msg.getPerformative() == ACLMessage.PROPOSE){
