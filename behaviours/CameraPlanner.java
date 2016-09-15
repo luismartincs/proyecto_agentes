@@ -10,15 +10,26 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import jaya.Jaya;
 import jaya.PlanObject;
-
+import utils.CameraUtils;
 
 class Point{
 	private int x,y;
+	private int realX,realY;
+	private char orientation;
 
-	Point(int x, int y){
+	Point(int x, int y, int realX, int realY){
 		this.x = x;
 		this.y = y;
+		this.realX = realX;
+		this.realY = realY;
+	}
 
+	void setOrientation(char o){
+		this.orientation = o;
+	}
+
+	char getOrientation(){
+		return orientation;
 	}
 
 	int getX(){
@@ -28,6 +39,19 @@ class Point{
 	int getY(){
 		return y;
 	}
+
+	int getRealX(){
+		return realX;
+	}
+
+	int getRealY(){
+		return realY;
+	}
+
+	@Override     
+     public String toString() {    
+     	return "("+x+","+y+")"+"("+realX+","+realY+"):"+orientation;
+     }
 }
 
 public class CameraPlanner extends CyclicBehaviour{
@@ -64,27 +88,30 @@ public class CameraPlanner extends CyclicBehaviour{
 
  			String line;
 		 	while ((line = br.readLine()) != null) {
-	             String data[] = line.split(",");
+
+		 		System.out.println(line);
+	            
+	            String data[] = line.split(",");
 	             
-	             int currentId = Integer.parseInt(data[0]);
+	            int currentId = Integer.parseInt(data[0]);
 
 	             if(currentId == robotId){
-		            
-		            System.out.println("id:"+data[0]);
-		            System.out.println("x:"+data[1]);
-		            System.out.println("y:"+data[2]);
-	             	
-	             	points[1] = new Point(Integer.parseInt(data[1]),Integer.parseInt(data[2]));
+		          	
+	             	points[1] = new Point(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]));
+
+	             	points[1].setOrientation(data[5].charAt(0));
 
 	             }else if( currentId == GOAL_ID){
 
-	             	System.out.println("Goal:"+data[0]);
-		            System.out.println("x:"+data[1]);
-		            System.out.println("y:"+data[2]);
+	                points[0] = new Point(Integer.parseInt(data[1]),Integer.parseInt(data[2]),Integer.parseInt(data[3]),Integer.parseInt(data[4]));
 
-		            points[0] = new Point(Integer.parseInt(data[1]),Integer.parseInt(data[2]));
+	                points[0].setOrientation(data[5].charAt(0));
 	             }
 
+         	}
+
+         	if(points[1] == null){
+         		return null;
          	}
 
          	br.close();
@@ -103,25 +130,43 @@ public class CameraPlanner extends CyclicBehaviour{
 
 	  	if(msg !=null){
 			
-			int robotId = Integer.parseInt(msg.getSender().getLocalName().replace("robot",""));
+			//int robotId = Integer.parseInt(msg.getSender().getLocalName().replace("robot",""));
 
 			// Si solicitan la posicion inicial
 			if (msg.getPerformative() == ACLMessage.CFP){
 
+				int robotId = 1;
+
 				System.out.println(nameTag+": Solicitud del Robot "+robotId);
 
-				Point []points = readAgentData(robotId);
+				Point points[] = readAgentData(robotId);
 
-				plan = algoritmo.optimizar(new int[]{5,20}, new int[]{3,20});
+				if(points != null){
 
-				allPlans.put("robot"+robotId,plan);
 
-				int time = plan.getTime();
+					System.out.println(nameTag+": Goal "+points[0]+",("+0+","+0+")");
+					System.out.println(nameTag+": Position "+points[1]+",("+(points[1].getRealX()-points[0].getRealX())+","+(points[1].getRealY()-points[0].getRealY())+")");
 
-				System.out.println(nameTag+": Tiempo a proponer al robot "+robotId+":"+plan.getTime());
-				System.out.println(nameTag+": Protocol string al robot "+robotId+":"+plan);
+					int offsetX = points[1].getRealX()-points[0].getRealX();
+					int offsetY = points[1].getRealY()-points[0].getRealY();
 
-				propose(msg,time);
+					plan = algoritmo.optimizar(new int[]{offsetX,20}, new int[]{offsetY,20},points[0].getRealX(),points[0].getRealY());
+					plan.setOrientation(points[1].getOrientation());
+
+					allPlans.put("robot"+robotId,plan);
+
+					int time = plan.getTime();
+
+					System.out.println(nameTag+": Tiempo a proponer al robot "+robotId+":"+plan.getTime());
+					System.out.println(nameTag+": Protocol string al robot "+robotId+":"+plan);
+
+					propose(msg,time);
+
+				}else{
+					System.out.println(nameTag+" No se pudo identificar al robot: "+robotId);
+					error(msg,nameTag+" no pudo identificar tus coordenadas");
+				}
+
 
 			}else if(msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL){
 
@@ -175,6 +220,19 @@ public class CameraPlanner extends CyclicBehaviour{
 		data.setContent(planToSend.toString());
 		data.setConversationId("Plan-trade");
 		myAgent.send(data);
+	}
+
+
+	private void error(ACLMessage contract,String text){
+
+		//CALCULAR EL SIGUIENTE PUNTO
+
+		ACLMessage plan = new ACLMessage(ACLMessage.FAILURE);
+
+		plan.addReceiver(contract.getSender());
+		plan.setContent(text);
+		plan.setConversationId("Plan-trade");
+		myAgent.send(plan);
 	}
 
 

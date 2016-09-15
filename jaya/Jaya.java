@@ -10,7 +10,7 @@ public class Jaya {
     public Jaya() {
     }
 
-    public static PlanObject optimizar(int[] x1, int[] y1) {
+    public static PlanObject optimizar(int[] x1, int[] y1,int goalX, int goalY) {
 		// TODO Auto-generated method stub
 // declarando k (#de agentes),j(# de coordenadas),x(coordenadas iniciales
 //de cada agente, a(límite inferior),b(límite superior)
@@ -154,16 +154,17 @@ public class Jaya {
         //SE FILTRAN LOS RESULTADOS
         
         path.add(new int[]{0,0});
-        filterPath.add(new int[]{startX,startY});
+        filterPath.add(new int[]{startX + goalX,startY + goalY});
         
-        int px = path.get(0)[0];
-        int py = path.get(0)[1];
+        int px = path.get(0)[0] + goalX;
+        int py = path.get(0)[1] + goalY;
         
         for (int i = 0; i < path.size(); i++) {
-            if (px != path.get(i)[0] || py != path.get(i)[1]){
-                px = path.get(i)[0];
-                py = path.get(i)[1];
-                filterPath.add(path.get(i));
+            if (px != (path.get(i)[0] + goalX) || py != (path.get(i)[1] + goalY)){
+                px = path.get(i)[0] + goalX;
+                py = path.get(i)[1] + goalY;
+                //filterPath.add(path.get(i));
+                filterPath.add(new int[]{px,py});;
             }
         }
         

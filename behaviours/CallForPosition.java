@@ -6,16 +6,19 @@ import serial.RobotInterface;
 import jade.core.AID;
 import jaya.PlanObject;
 import utils.RobotMap;
+import utils.CameraUtils;
+import utils.MathUtils;
 
 public class CallForPosition extends CyclicBehaviour{
 
 	private int repliesCnt=0;
 	private int repliesAgCnt=0;
+	private int failureCnt = 0;
 	private int besttimeplan=10000;
 	private int bestMap=10000;
 	private int totalAgents = 3;
 	private int rows = 10;
-	private int columns = 10;
+	private int columns = 15;
 
 	private AID bestCamera;
 	private AID bestRobot;
@@ -61,6 +64,12 @@ public class CallForPosition extends CyclicBehaviour{
 				}else if(msg.getContent().equals("map")){
 					cfpMap();
 				}else if(msg.getContent().equals("debug")){
+
+					int grado = MathUtils.getDegrees(1,10,10,1);
+
+					System.out.println(Integer.toBinaryString(grado));
+
+					/*
 					serialComm.write('S');
 					
 					try{Thread.sleep(15*1000);}catch(Exception ex){}
@@ -68,7 +77,7 @@ public class CallForPosition extends CyclicBehaviour{
 					System.out.println("read");
 					serialComm.getMap();
 					System.out.println("");
-					System.out.println("end");
+					System.out.println("end");*/
 				}
 
 			}else if(msg.getPerformative() == ACLMessage.PROPOSE){
@@ -88,10 +97,19 @@ public class CallForPosition extends CyclicBehaviour{
 					RobotMap receivedMap = RobotMap.getFromString(msg.getContent(),rows,columns);
 
 					mapa.merge(receivedMap);
+
+					plan.debugPoints();
+
+					int resolution[] = CameraUtils.getResolution(bestCamera.getLocalName());
+
+					plan.transformPoints(resolution[0],resolution[1],rows,columns);
+
 					//mapa.print();
 
 					//START MOVEMENT
 
+					
+					System.out.println(nameTag+": Resolution "+resolution[0]+","+resolution[1]);
 					System.out.println(nameTag + " EL AGENTE SE DEBE MOVER ");
 
 				}else{
@@ -100,6 +118,7 @@ public class CallForPosition extends CyclicBehaviour{
 
 					System.out.println(nameTag + " Tiempo final del plan "+plan.getTime());
 					System.out.println(nameTag + " Plan final: "+plan.toString());
+					System.out.println(nameTag + " Orientacion del robot: "+plan.getOrientation());
 
 					cfpMap();
 				}
@@ -116,6 +135,9 @@ public class CallForPosition extends CyclicBehaviour{
 
 				inform(msg);
 
+			}else if(msg.getPerformative() == ACLMessage.FAILURE){
+				System.out.println("Ocurrio un error, se reintentara x segundos");
+				//CREAR METODO RETRY PARA EL AGENTE QUE REPORTA EL FALLO
 			}
 
 		}else {
@@ -244,7 +266,9 @@ public class CallForPosition extends CyclicBehaviour{
 		if(repliesCnt >= 2){
 			repliesCnt = 0;
 			accept(msg);
-		}
+		}/*else if(repliesCnt >= 1 && failureCnt > 0){
+
+		}*/
 
 	}
 
