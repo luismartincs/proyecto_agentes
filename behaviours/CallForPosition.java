@@ -65,7 +65,7 @@ public class CallForPosition extends CyclicBehaviour{
 					cfpMap();
 				}else if(msg.getContent().equals("debug")){
 
-					int grado = MathUtils.getDegrees(1,10,10,1);
+					int grado = MathUtils.getDegrees(7,5,8,2);
 
 					System.out.println(Integer.toBinaryString(grado));
 
