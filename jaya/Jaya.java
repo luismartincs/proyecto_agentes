@@ -30,7 +30,7 @@ public class Jaya {
         System.out.println("Iniciales:");
         System.out.println("("+x[0]+","+y[0]+"),("+x[1]+","+y[1]+")");
   
-//Evaluamos la función objetivo con los valores actuales de x & y;
+//Evaluamos la funcion objetivo con los valores actuales de x & y;
 
         int[] F = new int[size];
         for (int i = 0; i < k; i++) {
