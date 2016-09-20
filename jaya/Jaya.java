@@ -13,7 +13,7 @@ public class Jaya {
     public static PlanObject optimizar(int[] x1, int[] y1,int goalX, int goalY) {
 		// TODO Auto-generated method stub
 // declarando k (#de agentes),j(# de coordenadas),x(coordenadas iniciales
-//de cada agente, a(límite inferior),b(límite superior)
+//de cada agente, a(limite inferior),b(limite superior)
         
         int size = x1.length;
         int k = size;
