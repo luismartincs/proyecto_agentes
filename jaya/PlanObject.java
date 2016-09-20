@@ -72,7 +72,10 @@ public class PlanObject{
         }
      }
 
-     public void transformPoints(int rw, int rh, int f, int c){
+     public ArrayList<int[]> transformPoints(int rw, int rh, int f, int c){
+
+        ArrayList<int[]> tpoints = new ArrayList<>();   
+
         double cw = rw/c;
         double ch = rh/f;
         System.out.println("Transformed points");
@@ -80,6 +83,8 @@ public class PlanObject{
         int px = (int)(points.get(0)[0]/cw);
         int py = (int)(points.get(0)[1]/ch);
 
+        tpoints.add(new int[]{px,py});
+        
         System.out.println(points.get(0)[0]+","+points.get(0)[1]+"---"+px+","+py);
 
         for(int []point:points){
@@ -89,10 +94,13 @@ public class PlanObject{
                 px = (int)(point[0]/cw);
                 py = (int)(point[1]/ch);
 
+                tpoints.add(new int[]{px,py});
                 System.out.println(point[0]+","+point[1]+"---"+px+","+py);
 
             }
         }
+
+        return tpoints;
 
      }
        

@@ -11,18 +11,32 @@ public class RobotInterface{
 
 	public RobotInterface(){
 
-		comPort = SerialPort.getCommPorts()[0];
-		comPort.openPort();
 		mapMatrix = new int[3][3];
 		
+	}
+
+	public void open(){
+		comPort = SerialPort.getCommPorts()[0];
+		comPort.openPort();
 	}
 
 	public void write(char data){
 		OutputStream os = comPort.getOutputStream();
 
 		try{
-
 			os.write((int)data);
+			os.close();
+		}catch(Exception ex){
+			System.out.println("write "+ex);
+		}
+	}
+
+
+	public void write(byte[] data){
+		OutputStream os = comPort.getOutputStream();
+
+		try{
+			os.write(data);
 			os.close();
 		}catch(Exception ex){
 			System.out.println(ex);
@@ -37,7 +51,7 @@ public class RobotInterface{
 		}
 	}
 
-	public void getMap(){
+	public int[][] getMap(){
 		InputStream in = comPort.getInputStream();
 		int visionMap = 0;
 		write('G');
@@ -81,8 +95,11 @@ public class RobotInterface{
 				System.out.println("");
 			}
 
+			in.close();
 
-      	} catch (Exception e) { e.printStackTrace(); }
+			return mapMatrix;
+
+      	} catch (Exception e) { e.printStackTrace(); return null;}
 	}
 
 	public void close(){

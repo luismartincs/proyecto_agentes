@@ -54,6 +54,16 @@ public class RobotMap {
             }
         }  
     }
+
+    public void mergeMatrixAt(int [][]matrix, int row, int col){
+
+        for (int i = -1; i < 1; ++i){
+            for (int j = -1; j < 1; ++j){
+                map[row+i][col+j] = matrix[1+i][1+j];
+            }
+        }
+
+    }
     
     public void print(){
         for (int i = 0; i < rows; i++) {

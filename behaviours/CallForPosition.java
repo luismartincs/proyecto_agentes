@@ -8,6 +8,8 @@ import jaya.PlanObject;
 import utils.RobotMap;
 import utils.CameraUtils;
 import utils.MathUtils;
+import java.util.ArrayList;
+
 
 public class CallForPosition extends CyclicBehaviour{
 
@@ -40,12 +42,10 @@ public class CallForPosition extends CyclicBehaviour{
 		nameTag = "("+name+")";
 
 		mapa = new RobotMap(rows,columns);
-		mapa.print();
+		//mapa.print();
 
-		if(!DEBUG){
-			System.out.println("Opening the port");
-			serialComm = new RobotInterface();
-		}
+		serialComm = new RobotInterface();
+
 	}
 
 	public void action() {
@@ -63,21 +63,11 @@ public class CallForPosition extends CyclicBehaviour{
 				
 				}else if(msg.getContent().equals("map")){
 					cfpMap();
-				}else if(msg.getContent().equals("debug")){
-
-					int grado = MathUtils.getDegrees(7,5,8,2);
-
-					System.out.println(Integer.toBinaryString(grado));
-
-					/*
-					serialComm.write('S');
+				}else if(msg.getConversationId().equals("debug")){
 					
-					try{Thread.sleep(15*1000);}catch(Exception ex){}
-
-					System.out.println("read");
-					serialComm.getMap();
-					System.out.println("");
-					System.out.println("end");*/
+					serialComm.open();
+					serialComm.write(msg.getContent().charAt(0));
+					serialComm.close();
 				}
 
 			}else if(msg.getPerformative() == ACLMessage.PROPOSE){
@@ -94,23 +84,7 @@ public class CallForPosition extends CyclicBehaviour{
 
 				if(msg.getConversationId().equals(MAP_TRADE)){
 
-					RobotMap receivedMap = RobotMap.getFromString(msg.getContent(),rows,columns);
-
-					mapa.merge(receivedMap);
-
-					plan.debugPoints();
-
-					int resolution[] = CameraUtils.getResolution(bestCamera.getLocalName());
-
-					plan.transformPoints(resolution[0],resolution[1],rows,columns);
-
-					//mapa.print();
-
-					//START MOVEMENT
-
-					
-					System.out.println(nameTag+": Resolution "+resolution[0]+","+resolution[1]);
-					System.out.println(nameTag + " EL AGENTE SE DEBE MOVER ");
+					doMovement(msg);
 
 				}else{
 
@@ -147,6 +121,54 @@ public class CallForPosition extends CyclicBehaviour{
 	}
 
 	//==================== Acciones individuales ====================
+
+
+	private void doMovement(ACLMessage msg){
+
+
+		//SCAM
+
+		serialComm.open();
+		serialComm.write('S');
+		
+		try{Thread.sleep(15*1000);}catch(Exception ex){}
+
+		int [][] myArea = serialComm.getMap();
+		
+
+		//MOVEMENT
+
+		RobotMap receivedMap = RobotMap.getFromString(msg.getContent(),rows,columns);
+
+		mapa.merge(receivedMap);
+
+		//plan.debugPoints();
+
+		int resolution[] = CameraUtils.getResolution(bestCamera.getLocalName());
+
+		ArrayList<int[]>  tpoints = plan.transformPoints(resolution[0],resolution[1],rows,columns);
+
+		byte command[] = new byte[3+(tpoints.size()*2)];
+
+		command[0] = 'M';
+		command[1] = (byte)plan.getOrientation();
+
+		command[command.length-1] = 127; 
+
+		int next = 2;
+		for(int []p: tpoints){
+			command[next] = (byte)p[0];
+			command[next+1] = (byte)p[1];
+			next+=2;
+		}
+
+		mapa.mergeMatrixAt(myArea,tpoints.get(0)[1],tpoints.get(0)[0]);
+		mapa.print();
+
+		serialComm.write(command);
+
+		serialComm.close();
+	}
 
 	//ACCIONES PARA OTRO AGENTE
 

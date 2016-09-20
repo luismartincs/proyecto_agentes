@@ -130,12 +130,10 @@ public class CameraPlanner extends CyclicBehaviour{
 
 	  	if(msg !=null){
 			
-			//int robotId = Integer.parseInt(msg.getSender().getLocalName().replace("robot",""));
+			int robotId = Integer.parseInt(msg.getSender().getLocalName().replace("robot",""));
 
 			// Si solicitan la posicion inicial
 			if (msg.getPerformative() == ACLMessage.CFP){
-
-				int robotId = 1;
 
 				System.out.println(nameTag+": Solicitud del Robot "+robotId);
 
