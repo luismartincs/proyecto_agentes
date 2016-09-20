@@ -18,6 +18,7 @@ public class RobotInterface{
 	public void open(){
 		comPort = SerialPort.getCommPorts()[0];
 		comPort.openPort();
+		System.out.println("Open: "+comPort.getDescriptivePortName());
 	}
 
 	public void write(char data){
