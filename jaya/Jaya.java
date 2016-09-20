@@ -43,7 +43,7 @@ public class Jaya {
         int iter = 0;
         while (stop == 0) {
             
-//-------------------------Aquí empiezan las iteraciones---------------------------------------------
+//-------------------------Aqui empiezan las iteraciones---------------------------------------------
 // Encontrando Best y Worst
             int[] F0 = new int[size];
             System.arraycopy(F, 0, F0, 0, size);
@@ -62,7 +62,7 @@ public class Jaya {
                 }
             }
 
-// Generando números random
+// Generando numeros random
             Random rnd = new Random();
             double rx1 = rnd.nextDouble();
             double rx2 = rnd.nextDouble();
@@ -120,7 +120,7 @@ public class Jaya {
                 F[i] = f1 + f2;
             }
 
-//revisando tolerancia de error o número de iteraciones
+//revisando tolerancia de error o numero de iteraciones
             for (int i = 0; i < k; i++) {
                 int tol = 0 + Math.abs(F[i]);
                 if (tol < 1) {
